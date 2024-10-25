@@ -14,8 +14,8 @@ brain  Brain;
 controller Controller1 = controller(primary);
 
 motor lMotorA = motor(PORT13,ratio6_1, true);
-motor lMotorB = motor(PORT12, ratio6_1, true);
-motor lMotorC = motor(PORT11,ratio6_1, false);
+motor lMotorB = motor(PORT12, ratio6_1, false);
+motor lMotorC = motor(PORT11,ratio6_1, true);
 
 motor_group leftMotors = motor_group(lMotorA, lMotorB, lMotorC);
 
@@ -38,10 +38,13 @@ motor stage2 = motor(PORT5, ratio18_1,false);
 
 motor_group intake = motor_group(stage1, stage2);
 
+rotation rSen = rotation(PORT6, true);
 motor arm = motor(PORT8, ratio18_1, false);
 
 digital_out clamp1 = digital_out(Brain.ThreeWirePort.C);
 digital_out clamp2 = digital_out(Brain.ThreeWirePort.G);
+
+bool clampHold = false;
 
 
 void vexcodeInit( void ) {

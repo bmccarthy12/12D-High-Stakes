@@ -128,6 +128,8 @@ void pre_auton() {
     Brain.Screen.printAt(5, 60, "%d", Brain.Battery.capacity());
     Brain.Screen.printAt(5, 80, "Chassis Heading Reading:");
     Brain.Screen.printAt(5, 100, "%f", chassis.get_absolute_heading());
+     Brain.Screen.printAt(5, 140, "Arm Rotation:");
+    Brain.Screen.printAt(5,180,"%f", rSen.angle(degrees));
     Brain.Screen.printAt(5, 120, "Selected Auton:");
     switch(current_auton_selection){
       case 0:
@@ -164,7 +166,7 @@ void pre_auton() {
     task::sleep(10);
   }
 }
-bool clampHold = false;
+
 
 void clamp() {
   if (clampHold == false){
@@ -227,8 +229,12 @@ void autonomous(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
+
 void usercontrol(void) {
   // User control code here, inside the loop
+  rSen.setPosition(0, degrees); 
+  arm.setPosition(0, degrees);
+  
   while (1) {
     // This is the main execution loop for the user control program.
     // Each time through the loop your program should update motor + servo
@@ -243,13 +249,13 @@ void usercontrol(void) {
 
       //picking up
       if( Controller1.ButtonL1.pressing()){
-         intake.spin(reverse, 100, pct);
+         intake.spin(reverse, 200, pct);
          //stage2.spin(reverse, 100, pct);
       }
        
       //spitting out
       else if( Controller1.ButtonL2.pressing()){
-          intake.spin(forward, 100, pct);
+          intake.spin(forward, 200, pct);
          // stage2.spin(forward, 100, pct);
       }
        
@@ -258,16 +264,16 @@ void usercontrol(void) {
      
      
       //arm:
-      arm.setBrake(brake);
-      if (Controller1.ButtonR1.pressing()) {
-        arm.spin(forward,100,pct);
+     
+      if (Controller1.ButtonR2.pressing() && (rSen.angle(degrees) <= 253)){
+             arm.spin(reverse, 100, rpm);
       }
-      else if (Controller1.ButtonR2.pressing()) {
-        arm.spin(reverse,100,pct);
-      }
-      else 
-        arm.stop();
-
+       else if(Controller1.ButtonR1.pressing() && (rSen.angle(degrees) >= 81)){
+          arm.stop();
+          arm.spin(forward, 100, rpm); 
+       }
+       else
+          arm.stop();
 
       //clamp
        if (Controller1.ButtonA.pressing()) {
@@ -293,6 +299,7 @@ int main() {
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
+  Controller1.ButtonB.pressed(clamp);
 
   // Run the pre-autonomous function.
   pre_auton();

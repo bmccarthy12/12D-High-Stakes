@@ -17,6 +17,7 @@ extern motor_group intake;
 
 extern digital_out clamp1;
 extern digital_out clamp2;
+extern bool clampHold;
 
 extern motor lMotorA;
 extern motor lMotorB;
@@ -28,6 +29,7 @@ extern motor rMotorB;
 extern motor rMotorC;
 extern motor_group rightMotors;
 
+extern rotation rSen;
 extern motor arm;
 
 
