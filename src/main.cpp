@@ -182,6 +182,20 @@ void clamp() {
   return;
 }
 
+
+//press a button to make the intake position the ring for the arm
+void intakeArmPos(){
+
+
+
+}
+
+
+
+
+
+
+
 /**
  * Auton function, which runs the selected auton. Case 0 is the default,
  * and will run in the brain screen goes untouched during preauton. Replace
@@ -265,21 +279,22 @@ void usercontrol(void) {
      
       //arm:
      
-      if (Controller1.ButtonR2.pressing() && (rSen.angle(degrees) <= 253)){
-             arm.spin(reverse, 100, rpm);
+
+     //the arm starts at around 270 degrees and rests at around 250 degrees
+
+     //arm up-- the highest point of rotation for the arm is @
+      if ( Controller1.ButtonR1.pressing() && (rSen.angle(degrees) >= 90) ){
+             arm.spin(forward, 100, rpm);
       }
-       else if(Controller1.ButtonR1.pressing() && (rSen.angle(degrees) >= 81)){
-          arm.stop();
-          arm.spin(forward, 100, rpm); 
+      //arm down-- the lowest point of rotation for the arm is @
+       else if( Controller1.ButtonR2.pressing() && (rSen.angle(degrees) <= 253) ){
+          arm.spin(reverse, 100, rpm); 
        }
        else
           arm.stop();
 
-      //clamp
-       if (Controller1.ButtonA.pressing()) {
-          clamp();
-       }
-       
+      
+      
 
 
 
@@ -300,6 +315,7 @@ int main() {
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
   Controller1.ButtonB.pressed(clamp);
+  Controller1.ButtonX.pressed(intakeArmPos);
 
   // Run the pre-autonomous function.
   pre_auton();
