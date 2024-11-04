@@ -120,6 +120,9 @@ void pre_auton() {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
   default_constants();
+  inert.calibrate();
+  inert.resetHeading();
+  Brain.Screen.print("Chassis Calibrated!");
 
   while(!auto_started){
     Brain.Screen.clearScreen();
@@ -131,6 +134,7 @@ void pre_auton() {
      Brain.Screen.printAt(5, 140, "Arm Rotation:");
     Brain.Screen.printAt(5,180,"%f", rSen.angle(degrees));
     Brain.Screen.printAt(5, 120, "Selected Auton:");
+    
     switch(current_auton_selection){
       case 0:
         Brain.Screen.printAt(5, 140, "Auton 1");
@@ -204,33 +208,34 @@ void intakeArmPos(){
  */
 
 void autonomous(void) {
-  auto_started = true;
-  switch(current_auton_selection){ 
-    case 0:
-      drive_test();
-      break;
-    case 1:         
-      drive_test();
-      break;
-    case 2:
-      turn_test();
-      break;
-    case 3:
-      swing_test();
-      break;
-    case 4:
-      full_test();
-      break;
-    case 5:
-      odom_test();
-      break;
-    case 6:
-      tank_odom_test();
-      break;
-    case 7:
-      holonomic_odom_test();
-      break;
- }
+  on_goal_safe_auto();
+//   auto_started = true;
+//   switch(current_auton_selection){ 
+//     case 0:
+//       drive_test();
+//       break;
+//     case 1:         
+//       drive_test();
+//       break;
+//     case 2:
+//       turn_test();
+//       break;
+//     case 3:
+//       swing_test();
+//       break;
+//     case 4:
+//       full_test();
+//       break;
+//     case 5:
+//       odom_test();
+//       break;
+//     case 6:
+//       tank_odom_test();
+//       break;
+//     case 7:
+//       holonomic_odom_test();
+//       break;
+//  }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -283,15 +288,15 @@ void usercontrol(void) {
      //the arm starts at around 270 degrees and rests at around 250 degrees
 
      //arm up-- the highest point of rotation for the arm is @
-      if ( Controller1.ButtonR1.pressing() && (rSen.angle(degrees) >= 90) ){
-             arm.spin(forward, 100, rpm);
+      if ( Controller1.ButtonR1.pressing() && (rSen.angle(degrees) <165) ){
+             arm.spin(forward, 110, rpm);
       }
       //arm down-- the lowest point of rotation for the arm is @
-       else if( Controller1.ButtonR2.pressing() && (rSen.angle(degrees) <= 253) ){
+       else if( Controller1.ButtonR2.pressing() && (rSen.angle(degrees) > 0) ){
           arm.spin(reverse, 100, rpm); 
        }
        else
-          arm.stop();
+          arm.stop(brake);
 
       
       

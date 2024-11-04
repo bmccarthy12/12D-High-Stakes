@@ -38,7 +38,7 @@ motor stage2 = motor(PORT5, ratio18_1,false);
 
 motor_group intake = motor_group(stage1, stage2);
 
-rotation rSen = rotation(PORT6, true);
+rotation rSen = rotation(PORT6, false);
 motor arm = motor(PORT8, ratio18_1, false);
 
 digital_out clamp1 = digital_out(Brain.ThreeWirePort.C);

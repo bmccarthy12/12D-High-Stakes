@@ -31,6 +31,7 @@ extern motor_group rightMotors;
 
 extern rotation rSen;
 extern motor arm;
+extern inertial inert;
 
 
 

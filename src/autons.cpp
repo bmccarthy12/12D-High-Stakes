@@ -40,46 +40,46 @@ void odom_constants(){
  * The expected behavior is to return to the start position.
  */
 
-void drive_test(){
-  chassis.drive_distance(6);
-  chassis.drive_distance(12);
-  chassis.drive_distance(18);
-  chassis.drive_distance(-36);
-}
+// void drive_test(){
+//   chassis.drive_distance(6);
+//   chassis.drive_distance(12);
+//   chassis.drive_distance(18);
+//   chassis.drive_distance(-36);
+// }
 
 /**
  * The expected behavior is to return to the start angle, after making a complete turn.
  */
 
-void turn_test(){
-  chassis.turn_to_angle(5);
-  chassis.turn_to_angle(30);
-  chassis.turn_to_angle(90);
-  chassis.turn_to_angle(225);
-  chassis.turn_to_angle(0);
-}
+// void turn_test(){
+//   chassis.turn_to_angle(5);
+//   chassis.turn_to_angle(30);
+//   chassis.turn_to_angle(90);
+//   chassis.turn_to_angle(225);
+//   chassis.turn_to_angle(0);
+// }
 
 /**
  * Should swing in a fun S shape.
  */
 
-void swing_test(){
-  chassis.left_swing_to_angle(90);
-  chassis.right_swing_to_angle(0);
-}
+// void swing_test(){
+//   chassis.left_swing_to_angle(90);
+//   chassis.right_swing_to_angle(0);
+// }
 
 /**
  * A little of this, a little of that; it should end roughly where it started.
  */
 
-void full_test(){
-  chassis.drive_distance(24);
-  chassis.turn_to_angle(-45);
-  chassis.drive_distance(-36);
-  chassis.right_swing_to_angle(-90);
-  chassis.drive_distance(24);
-  chassis.turn_to_angle(0);
-}
+// void full_test(){
+//   chassis.drive_distance(24);
+//   chassis.turn_to_angle(-45);
+//   chassis.drive_distance(-36);
+//   chassis.right_swing_to_angle(-90);
+//   chassis.drive_distance(24);
+//   chassis.turn_to_angle(0);
+// }
 
 /**
  * Doesn't drive the robot, but just prints coordinates to the Brain screen 
@@ -87,43 +87,63 @@ void full_test(){
  * see if the coordinates increase like you'd expect.
  */
 
-void odom_test(){
-  chassis.set_coordinates(0, 0, 0);
-  while(1){
-    Brain.Screen.clearScreen();
-    Brain.Screen.printAt(5,20, "X: %f", chassis.get_X_position());
-    Brain.Screen.printAt(5,40, "Y: %f", chassis.get_Y_position());
-    Brain.Screen.printAt(5,60, "Heading: %f", chassis.get_absolute_heading());
-    Brain.Screen.printAt(5,80, "ForwardTracker: %f", chassis.get_ForwardTracker_position());
-    Brain.Screen.printAt(5,100, "SidewaysTracker: %f", chassis.get_SidewaysTracker_position());
-    task::sleep(20);
-  }
-}
+// void odom_test(){
+//   chassis.set_coordinates(0, 0, 0);
+//   while(1){
+//     Brain.Screen.clearScreen();
+//     Brain.Screen.printAt(5,20, "X: %f", chassis.get_X_position());
+//     Brain.Screen.printAt(5,40, "Y: %f", chassis.get_Y_position());
+//     Brain.Screen.printAt(5,60, "Heading: %f", chassis.get_absolute_heading());
+//     Brain.Screen.printAt(5,80, "ForwardTracker: %f", chassis.get_ForwardTracker_position());
+//     Brain.Screen.printAt(5,100, "SidewaysTracker: %f", chassis.get_SidewaysTracker_position());
+//     task::sleep(20);
+//   }
+// }
 
 /**
  * Should end in the same place it began, but the second movement
  * will be curved while the first is straight.
  */
 
-void tank_odom_test(){
-  odom_constants();
-  chassis.set_coordinates(0, 0, 0);
-  chassis.turn_to_point(24, 24);
-  chassis.drive_to_point(24,24);
-  chassis.drive_to_point(0,0);
-  chassis.turn_to_angle(0);
-}
+// void tank_odom_test(){
+//   odom_constants();
+//   chassis.set_coordinates(0, 0, 0);
+//   chassis.turn_to_point(24, 24);
+//   chassis.drive_to_point(24,24);
+//   chassis.drive_to_point(0,0);
+//   chassis.turn_to_angle(0);
+// }
 
 /**
  * Drives in a square while making a full turn in the process. Should
  * end where it started.
  */
 
-void holonomic_odom_test(){
+// void holonomic_odom_test(){
+//   odom_constants();
+//   chassis.set_coordinates(0, 0, 0);
+//   chassis.holonomic_drive_to_pose(0, 18, 90);
+//   chassis.holonomic_drive_to_pose(18, 0, 180);
+//   chassis.holonomic_drive_to_pose(0, 18, 270);
+//   chassis.holonomic_drive_to_pose(0, 0, 0);
+//}
+
+void on_goal_safe_auto(){
   odom_constants();
-  chassis.set_coordinates(0, 0, 0);
-  chassis.holonomic_drive_to_pose(0, 18, 90);
-  chassis.holonomic_drive_to_pose(18, 0, 180);
-  chassis.holonomic_drive_to_pose(0, 18, 270);
-  chassis.holonomic_drive_to_pose(0, 0, 0);
+  inert.calibrate();
+  inert.resetHeading();
+  chassis.drive_distance(-30); //drive to first goal closest to us
+  clamp1.set(true); //clamp down on goal
+  clamp2.set(true);
+  intake.spin(reverse, 100, velocityUnits::pct); //score preload
+  chassis.turn_to_angle(315, 5); //turn to ring stack
+  chassis.drive_distance(20); //drive and pick up second ring
 }
+
+// void off_goal_safe_auto(){
+//   clamp1.set(true); //clamp down on goal
+//   clamp2.set(true);
+//   intake.spin(fwd, 100, velocityUnits::pct); //score preload
+//   chassis.turn_to_angle(45, 8); //turn to ring stack
+//   chassis.drive_distance(10); //drive and pick up second ring
+// }
