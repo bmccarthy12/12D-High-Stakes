@@ -25,8 +25,8 @@ motor rMotorC = motor(PORT1, ratio6_1, false);
 
 motor_group rightMotors = motor_group(rMotorA, rMotorB, rMotorC);
 
-inertial inert = inertial(PORT10);
-
+inertial inert = inertial(PORT17);
+optical colorSort = optical(PORT14);
 const double wheelTravel = 2.75; 
 const double trackWidth = 12; 
 const double wheelBase = 10.5 ;
@@ -43,10 +43,13 @@ motor arm = motor(PORT8, ratio18_1, false);
 
 digital_out clamp1 = digital_out(Brain.ThreeWirePort.C);
 digital_out clamp2 = digital_out(Brain.ThreeWirePort.G);
-
+digital_out colorPiston = digital_out(Brain.ThreeWirePort.H);
 bool clampHold = false;
-
-
+bool colorButton = false;
+bool colorSortStatus = false;
+bool colorSortOffToggle = false;
+color ringColor = color(red);
+color oppositeColor = color(blue);
 void vexcodeInit( void ) {
   // nothing to initialize
 }

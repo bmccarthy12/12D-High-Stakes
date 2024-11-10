@@ -15,15 +15,20 @@ extern motor stage1;
 extern motor stage2;
 extern motor_group intake;
 
-extern digital_out clamp1;
+extern digital_out clamp1; 
 extern digital_out clamp2;
 extern bool clampHold;
-
+extern bool colorButton;
+extern bool colorSortStatus;
+extern bool colorSortOffToggle;
+extern optical colorSort;
+extern color ringColor;
+extern color oppositeColor;
 extern motor lMotorA;
 extern motor lMotorB;
 extern motor lMotorC;
 extern motor_group leftMotors;
-
+extern digital_out colorPiston;
 extern motor rMotorA;
 extern motor rMotorB;
 extern motor rMotorC;

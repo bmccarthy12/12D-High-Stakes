@@ -129,21 +129,90 @@ void odom_constants(){
 //}
 
 void on_goal_safe_auto(){
-  odom_constants();
-  inert.calibrate();
-  inert.resetHeading();
-  chassis.drive_distance(-30); //drive to first goal closest to us
+  odom_constants(); 
+//   // inert.calibrate(); //ON GOAL SAFE AUTO, Nub going down setup
+//   // inert.resetHeading();
+  chassis.drive_distance(-16); //drive to first goal closest to us
+  chassis.turn_to_angle(-45, 8);
+  chassis.drive_distance(-15);
   clamp1.set(true); //clamp down on goal
   clamp2.set(true);
+   wait(0.5, sec); //wait on clamp
   intake.spin(reverse, 100, velocityUnits::pct); //score preload
-  chassis.turn_to_angle(315, 5); //turn to ring stack
-  chassis.drive_distance(20); //drive and pick up second ring
+  chassis.turn_to_angle(-80, 8); //turn to ring stack
+  chassis.drive_distance(30); //drive and pick up second ring
+  chassis.drive_distance(3); //shimmy and shake
+  chassis.drive_distance(-3);
+  intake.stop();
+  chassis.drive_distance(3);
+  chassis.drive_distance(-3);
+  chassis.drive_distance(3);
+  chassis.turn_to_angle(90, 8); //turn for winpoint
+  intake.spin(fwd, 100, velocityUnits::pct); //outtake excess ring
+  chassis.drive_distance(40); //hit the ladder
 }
 
-// void off_goal_safe_auto(){
-//   clamp1.set(true); //clamp down on goal
-//   clamp2.set(true);
-//   intake.spin(fwd, 100, velocityUnits::pct); //score preload
-//   chassis.turn_to_angle(45, 8); //turn to ring stack
-//   chassis.drive_distance(10); //drive and pick up second ring
-// }
+void off_goal_safe_auto(){
+odom_constants(); 
+chassis.drive_distance(-10); //drive to first goal closest to us //OFF GOAL SAFE AUTO nub going up setuo
+chassis.turn_to_angle(35, 8);
+chassis.drive_distance(-17);
+clamp1.set(true); //clamp down on goal
+clamp2.set(true);
+wait(0.5, sec); //wait on clamp
+intake.spin(reverse, 100, velocityUnits::pct); //score preload
+chassis.turn_to_angle(90, 8); //turn to ring stack
+chassis.drive_distance(30); //drive and pick up second ring
+chassis.drive_distance(3); //shimmy and shake
+chassis.drive_distance(-3);
+intake.stop();
+chassis.drive_distance(3);
+chassis.drive_distance(-3);
+chassis.drive_distance(3);
+chassis.turn_to_angle(-90, 8); //turn for winpoint
+intake.spin(fwd, 100, velocityUnits::pct); //outtake excess ring
+chassis.drive_distance(40); //hit the ladder
+}
+ 
+void skills_auto(){
+  odom.constants();
+  chassis.drive_distance(); //drive to first clamp
+  clamp1.set(true); //clamp down on goal
+  clamp2.set(true);
+  wait(0.5, sec); //wait to secure clamp
+  chassis.turn_to_angle(); //turn to first close mid ring
+  intake.spin(reverse, 100, velocityUnits::pct); //score preload & start intake
+chassis.drive_distance(cc ll8ii); //drive to first close mid ring
+chassis.turn_to_angle(); //turn to second close mid ring
+chassis.drive_distance(); //drive to second close mid ring
+chassis.turn_to_angle(); //turn to close double rings
+chassis.drive_distance(); //drive to and pick up the rings
+chassis.turn_to_angle(); //turn for last ring on this side
+chassis.drive_distance(); //drive to last ring
+chassis.turn_to_angle(); //line up for corner
+chassis.drive_distance(); //go to corner
+intake.stop();
+clamp1.set(false); //release goal
+clamp2.set(false);
+chassis.drive distance(); //drive to line up with other goal on close side
+chassis.turn_to_angle(); //turn to the angle MAKE SURE CLAMP IS FACING TOWARDS GOAL
+chassis.drive_distance(); //drive to goal
+clamp1.set(true); //release goal
+clamp2.set(true);
+wait(0.5, sec);
+chassis.turn_to_angle(); //line up with rings
+intake.spin(reverse, 100, velocityUnits::pct); //start intake
+chassis.drive_distance(); //drive to ring
+chassis.turn_to_angle(); //turn to next ring
+chassis.drive_distnce(); //drive to ring
+chassis.turn_to_angle(); //turn to double ring();
+chassis.drive_distance(); //drive through rings
+chassis.turn_to_angle(); //turn to penultimate ring
+chassis.drive_distance(); //intake penultimate ring
+chassis.turn_to_angle(); //turn to ultimate ring
+chassis.drive_distance(); //drive to ultimate ring
+chassis.drive_distance(); //drive back to corner
+clamp1.set(false); //release goal
+clamp2.set(false);
+chassis.drive_distance(); //get away from corner
+}

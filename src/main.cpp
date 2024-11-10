@@ -39,7 +39,7 @@ Drive chassis(
 //
 //Write it here:
 
-ZERO_TRACKER_NO_ODOM,
+ZERO_TRACKER_ODOM,
 
 //Add the names of your Drive motors into the motor groups below, separated by commas, i.e. motor_group(Motor1,Motor2,Motor3).
 //You will input whatever motor names you chose when you configured your robot using the sidebar configurer, they don't have to be "Motor1" and "Motor2".
@@ -51,7 +51,7 @@ motor_group(lMotorA, lMotorB, lMotorC),
 motor_group(rMotorA, rMotorB, rMotorC),
 
 //Specify the PORT NUMBER of your inertial sensor, in PORT format (i.e. "PORT1", not simply "1"):
-PORT15,
+PORT17,
 
 //Input your wheel diameter. (4" omnis are actually closer to 4.125"):
 2.75,
@@ -123,6 +123,7 @@ void pre_auton() {
   inert.calibrate();
   inert.resetHeading();
   Brain.Screen.print("Chassis Calibrated!");
+ 
 
   while(!auto_started){
     Brain.Screen.clearScreen();
@@ -131,9 +132,10 @@ void pre_auton() {
     Brain.Screen.printAt(5, 60, "%d", Brain.Battery.capacity());
     Brain.Screen.printAt(5, 80, "Chassis Heading Reading:");
     Brain.Screen.printAt(5, 100, "%f", chassis.get_absolute_heading());
-     Brain.Screen.printAt(5, 140, "Arm Rotation:");
+    Brain.Screen.printAt(5, 140, "Arm Rotation:");
     Brain.Screen.printAt(5,180,"%f", rSen.angle(degrees));
     Brain.Screen.printAt(5, 120, "Selected Auton:");
+
     
     switch(current_auton_selection){
       case 0:
@@ -169,6 +171,44 @@ void pre_auton() {
     }
     task::sleep(10);
   }
+}
+
+void autonomous(void) {
+  auto_started = true;
+  switch(current_auton_selection){ 
+    case 0:
+      drive_test();
+      break;
+
+    case 1:         
+      on_goal_safe_auto();
+      break;
+
+    case 2:
+      off_goal_safe_auto();
+      break;
+
+    case 3:
+      skills_auto();
+      break;
+
+    case 4:
+      full_test();
+      break;
+
+    case 5:
+      odom_test();
+      break;
+
+    case 6:
+      tank_odom_test();
+      break;
+
+    case 7:
+      holonomic_odom_test();
+      break;
+      
+ }
 }
 
 
@@ -247,8 +287,44 @@ void autonomous(void) {
 /*                                                                           */
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
+void setColor(){
+  if(colorButton == false){
+    colorButton = true;
+    colorSortStatus = true;
+    ringColor = color(red);
+    oppositeColor = color(blue);
+    Controller1.Screen.clearScreen();
+    Controller1.Screen.setCursor(1,1);
+    Controller1.Screen.print("Your Color: RED");
 
-
+  } 
+  else{
+    colorButton = false;
+    colorSortStatus = true;
+    ringColor = color(blue);
+    oppositeColor = color(red);
+    Controller1.Screen.clearScreen();
+    Controller1.Screen.setCursor(1,1);
+    Controller1.Screen.print("Your Color: BLUE");
+  }
+  return;
+}
+void turnColorSortOff(){
+  if(colorSortOffToggle == false){
+    colorSortStatus = false;
+    colorSortOffToggle = true;
+    Controller1.Screen.clearScreen();
+    Controller1.Screen.setCursor(1,1);
+    Controller1.Screen.print("COLOR SORTING OFF");
+  }
+  else{
+    colorSortOffToggle = false;
+    colorSortStatus = false;
+    Controller1.Screen.clearScreen();
+    Controller1.Screen.setCursor(1,1);
+    Controller1.Screen.print("COLOR SORTING OFF");
+  }
+}
 void usercontrol(void) {
   // User control code here, inside the loop
   rSen.setPosition(0, degrees); 
@@ -267,20 +343,34 @@ void usercontrol(void) {
       //intake controls:
 
       //picking up
-      if( Controller1.ButtonL1.pressing()){
-         intake.spin(reverse, 200, pct);
+      if(Controller1.ButtonL1.pressing()){
+         intake.spin(reverse,200,pct);
+         if(colorSort.color() == oppositeColor && colorSortStatus == true){
+            Controller1.Screen.setCursor(2,1);
+            Controller1.Screen.print("COLOR DETECTED");
+            wait(0.2, seconds);
+            colorPiston.set(true);
+            wait(0.5, seconds);
+            colorPiston.set(false);
+         }
+        }
+         //else{
+          //intake.spin(reverse,200,pct);
+        // }
+
          //stage2.spin(reverse, 100, pct);
-      }
+      
        
       //spitting out
-      else if( Controller1.ButtonL2.pressing()){
+      else if(Controller1.ButtonL2.pressing()){
           intake.spin(forward, 200, pct);
          // stage2.spin(forward, 100, pct);
       }
        
-      else
+      else{
         intake.stop();
-     
+      }
+  
      
       //arm:
      
@@ -289,14 +379,17 @@ void usercontrol(void) {
 
      //arm up-- the highest point of rotation for the arm is @
       if ( Controller1.ButtonR1.pressing() && (rSen.angle(degrees) <165) ){
-             arm.spin(forward, 110, rpm);
+         arm.spin(forward, 110, rpm);
       }
       //arm down-- the lowest point of rotation for the arm is @
        else if( Controller1.ButtonR2.pressing() && (rSen.angle(degrees) > 0) ){
           arm.spin(reverse, 100, rpm); 
        }
        else
-          arm.stop(brake);
+        arm.stop(hold);
+       
+         
+
 
       
       
@@ -310,17 +403,20 @@ void usercontrol(void) {
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
-}
+
+  }
 
 //
 // Main will set up the competition functions and callbacks.
 //
-int main() {
+int main(){
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
   Controller1.ButtonB.pressed(clamp);
   Controller1.ButtonX.pressed(intakeArmPos);
+  Controller1.ButtonRight.pressed(setColor);
+  Controller1.ButtonDown.pressed(turnColorSortOff);
 
   // Run the pre-autonomous function.
   pre_auton();
